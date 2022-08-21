@@ -1,0 +1,13 @@
+#!/bin/sh
+# Check if in correct dir
+if [ ! -f CMakeLists.txt ]; then
+  echo "CMakeLists.txt not found!"
+  exit
+fi
+
+# find the name of the project
+PROJECT_NAME=$(cat CMakeLists.txt | grep project | sed 's/project(//g' | sed 's/)//g')
+
+git submodule add $1 deps/$2
+sed -i "/# deps/a add_subdirectory(deps/$2)" CMakeLists.txt
+sed -i "/# link/a target_link_libraries($PROJECT_NAME $3)" CMakeLists.txt
